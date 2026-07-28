@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil & Sejarah - Desa Sungai Raja</title>
+    <link rel="icon" type="image/png" href="img/logo_sungairaja.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#1E40AF', secondary: '#0D9488', accent: '#F59E0B' } } } }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-800 relative min-h-screen flex flex-col justify-between">
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 border-l-4 border-accent transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-green-400 text-xl"></i>
+        <div><h5 class="font-bold text-sm" id="toast-title">Berhasil!</h5><p class="text-xs text-gray-300" id="toast-msg">Permintaan sedang diproses.</p></div>
+    </div>
+
+    <div class="bg-primary text-white text-xs py-2 px-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4"><span><i class="fa-solid fa-location-dot mr-1"></i> Kec. Na IX-X, Kab. Labuhanbatu Utara</span><span class="hidden sm:inline"><i class="fa-solid fa-clock mr-1"></i> Jam Kerja: Sen - Jum (08:00 - 16:00 WIB)</span></div>
+            <div class="flex items-center space-x-4"><button onclick="openModal('modal-role-select')" id="role-badge" class="bg-blue-800 hover:bg-blue-700 text-amber-300 border border-blue-600 px-3 py-1 rounded-full font-bold transition flex items-center space-x-1.5 shadow"><i class="fa-solid fa-user text-xs"></i><span id="role-badge-text">Mode: Pembaca</span><i class="fa-solid fa-rotate text-[10px] ml-1 opacity-70"></i></button></div>
+        </div>
+    </div>
+
+    <nav class="bg-white shadow-md sticky top-9 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <img src="img/logo_sungairaja.png" alt="Logo Desa" class="w-12 h-12 object-contain">
+                    <div><span class="block font-bold text-lg text-primary leading-tight">DESA SUNGAI RAJA</span><span class="text-xs text-gray-500 font-semibold tracking-wider">LABUHANBATU UTARA</span></div>
+                </a>
+                <div class="hidden lg:flex items-center space-x-6 text-sm font-medium text-gray-700">
+                    <a href="index.html" class="nav-link hover:text-primary transition py-2">Beranda</a>
+                    <a href="profil.html" class="nav-link hover:text-primary transition py-2">Profil Desa</a>
+                    <a href="berita.html" class="nav-link hover:text-primary transition py-2">Informasi Publik</a>
+                    <a href="perpustakaan.html" class="nav-link hover:text-primary transition py-2">Perpustakaan</a>
+                    <a href="galeri.html" class="nav-link hover:text-primary transition py-2">Galeri</a>
+                    <button onclick="openModal('modal-layanan')" class="bg-primary hover:bg-blue-800 text-white px-5 py-2.5 rounded-full shadow transition flex items-center space-x-2 font-semibold"><i class="fa-solid fa-file-signature"></i><span>Buat Surat Online</span></button>
+                </div>
+                <div class="lg:hidden flex items-center"><button id="mobile-menu-btn" class="text-gray-600 hover:text-primary focus:outline-none text-2xl"><i class="fa-solid fa-bars"></i></button></div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t px-4 pt-2 pb-6 space-y-3 shadow-lg">
+            <a href="index.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Beranda</a>
+            <a href="profil.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Profil Desa</a>
+            <a href="berita.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Informasi Publik</a>
+            <a href="perpustakaan.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Perpustakaan Digital</a>
+            <a href="galeri.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Galeri Desa</a>
+            <div class="pt-2"><button onclick="openModal('modal-layanan'); closeMobileMenu();" class="w-full bg-primary text-white py-2.5 rounded-xl font-semibold text-xs">Buat Surat Online</button></div>
+        </div>
+    </nav>
+
+    <main class="flex-grow py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-gray-200 pb-6 gap-4">
+            <div>
+                <span class="text-secondary font-bold text-sm uppercase tracking-wider">Mengenal Lebih Dekat</span>
+                <h1 class="text-4xl font-extrabold text-gray-900 mt-1">Profil & Sejarah Desa Sungai Raja</h1>
+            </div>
+            <div id="admin-edit-profile-btn" class="hidden">
+                <button onclick="openEditProfileModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center space-x-2 text-sm">
+                    <i class="fa-solid fa-pen-to-square"></i><span>Edit Profil & Data Desa</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="profile-content-box">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 md:col-span-2">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-3"><i class="fa-solid fa-clock-rotate-left text-primary mr-2"></i> Sejarah Singkat Desa</h3>
+                    <p id="profile-sejarah-text" class="text-sm text-gray-600 leading-relaxed"></p>
+                </div>
+                <div class="bg-gradient-to-br from-primary to-blue-900 text-white p-8 rounded-3xl shadow-lg flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 border-b border-white/20 pb-3"><i class="fa-solid fa-bullseye text-accent mr-2"></i> Visi & Misi</h3>
+                        <p class="text-xs font-bold text-accent uppercase tracking-wider">Visi Utama:</p>
+                        <p id="profile-visi-text" class="text-sm font-medium mt-1 mb-4"></p>
+                        <p class="text-xs font-bold text-accent uppercase tracking-wider">Misi Desa:</p>
+                        <ul id="profile-misi-list" class="text-xs space-y-2 mt-1 list-disc list-inside text-blue-100"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Data Administrasi Wilayah</h3>
+                        <div class="space-y-4 text-sm">
+                            <div class="flex border-b border-gray-100 pb-3"><span class="w-44 font-semibold text-gray-500">Kode Desa</span><span id="val-kode" class="font-bold text-gray-800"></span></div>
+                            <div class="flex border-b border-gray-100 pb-3"><span class="w-44 font-semibold text-gray-500">Tahun Pembentukan</span><span id="val-tahun" class="font-bold text-gray-800"></span></div>
+                            <div class="flex border-b border-gray-100 pb-3"><span class="w-44 font-semibold text-gray-500">Kecamatan</span><span id="val-kec" class="font-bold text-gray-800"></span></div>
+                            <div class="flex border-b border-gray-100 pb-3"><span class="w-44 font-semibold text-gray-500">Kabupaten</span><span id="val-kab" class="font-bold text-gray-800"></span></div>
+                            <div class="flex border-b border-gray-100 pb-3"><span class="w-44 font-semibold text-gray-500">Provinsi</span><span id="val-prov" class="font-bold text-gray-800"></span></div>
+                            <div class="flex pb-3"><span class="w-44 font-semibold text-gray-500">Luas Wilayah</span><span id="val-luas" class="font-bold text-gray-800"></span></div>
+                        </div>
+                        <a href="https://maps.google.com" target="_blank" class="mt-8 inline-flex items-center bg-secondary hover:bg-teal-700 text-white font-bold px-6 py-3 rounded-xl shadow transition">
+                            <i class="fa-solid fa-map-location-dot mr-2"></i> Buka Peta Google Maps
+                        </a>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider"><i class="fa-solid fa-image mr-1 text-primary"></i> Foto Peta Wilayah</span>
+                                <span class="text-[11px] bg-blue-100 text-primary px-2 py-0.5 rounded font-bold animate-pulse">Klik foto untuk perbesar 🔍</span>
+                            </div>
+                            <div onclick="openGalleryModal('Peta Wilayah Desa Sungai Raja', 'img/peta_sungairaja.jpg')" class="w-full h-72 rounded-2xl overflow-hidden shadow-md border border-gray-200 bg-gray-100 relative group cursor-pointer">
+                                <img src="img/peta_sungairaja.jpg" alt="Peta Wilayah Desa Sungai Raja" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                                    <span class="bg-primary/90 text-white px-5 py-2.5 rounded-full flex items-center space-x-2 text-sm font-bold shadow-2xl transform scale-95 group-hover:scale-100 transition">
+                                        <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+                                        <span>Lihat Layar Penuh</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2"><i class="fa-solid fa-map-location-dot mr-1 text-secondary"></i> Google Maps Interaktif</span>
+                            <div class="w-full h-64 rounded-2xl overflow-hidden shadow-inner bg-gray-100 relative border border-gray-200">
+                                <iframe src="https://maps.google.com/maps?q=Sungai+Raja+Na+IX-X+Labuhanbatu+Utara&t=&z=13&ie=UTF8&iwloc=&output=embed" class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white pt-16 pb-12 border-t border-gray-800 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div class="md:col-span-1 space-y-4"><div class="flex items-center space-x-3"><img src="img/logo_sungairaja.png" alt="Logo Desa" class="w-10 h-10 object-contain"><span class="font-extrabold text-xl tracking-wide">SUNGAI RAJA</span></div><p class="text-gray-400 text-xs leading-relaxed">Website Resmi Pemerintah Desa Sungai Raja, Kecamatan Na IX-X, Kabupaten Labuhanbatu Utara, Provinsi Sumatera Utara.</p></div>
+                <div class="space-y-3"><h4 class="font-bold text-sm tracking-wider uppercase text-accent border-l-2 border-accent pl-2">Hubungi Kami</h4><p class="text-xs text-gray-400"><i class="fa-solid fa-map-marker-alt text-primary mr-2"></i>5M7R+357, Sungai Raja, Kec. Na IX-X, Labuhanbatu Utara</p><p class="text-xs text-gray-400"><i class="fa-solid fa-phone text-primary mr-2"></i>(0624) 458920</p></div>
+                <div class="space-y-3"><h4 class="font-bold text-sm tracking-wider uppercase text-accent border-l-2 border-accent pl-2">Tautan Cepat</h4><ul class="text-xs text-gray-400 space-y-2"><li><a href="profil.html">Profil Desa</a></li><li><a href="berita.html">Informasi & Berita</a></li><li><a href="perpustakaan.html">Perpustakaan Digital</a></li><li><a href="galeri.html">Galeri Kegiatan</a></li></ul></div>
+                <div class="space-y-3"><h4 class="font-bold text-sm tracking-wider uppercase text-accent border-l-2 border-accent pl-2">Temukan Kami</h4><div class="flex space-x-3 text-lg"><a href="#" class="w-9 h-9 bg-gray-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></a><a href="#" class="w-9 h-9 bg-gray-800 hover:bg-pink-600 rounded-full flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a><a href="#" class="w-9 h-9 bg-gray-800 hover:bg-red-600 rounded-full flex items-center justify-center transition"><i class="fa-brands fa-youtube"></i></a></div></div>
+            </div>
+            <div class="pt-8 border-t border-gray-800 text-center text-xs text-gray-500"><p>© 2026 Pemerintah Desa Sungai Raja - Labuhanbatu Utara. Powered by Smart Village Portal.</p></div>
+        </div>
+    </footer>
+
+    <div id="modal-gallery" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="max-w-6xl w-full text-center relative modal-enter">
+            <button onclick="closeModal('modal-gallery')" class="absolute -top-12 right-0 text-white hover:text-gray-300 text-3xl font-bold flex items-center space-x-1 bg-white/10 px-3 py-1 rounded-full"><i class="fa-solid fa-times mr-1"></i> <span class="text-xs">Tutup</span></button>
+            <div class="overflow-auto max-h-[85vh] rounded-2xl border-4 border-white/20 bg-gray-900 shadow-2xl">
+                <img id="gallery-zoom-img" src="" class="w-full h-auto object-contain mx-auto">
+            </div>
+            <h4 id="gallery-zoom-title" class="text-white font-bold text-lg mt-3 tracking-wide"></h4>
+        </div>
+    </div>
+
+    <div id="modal-edit-profile" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative modal-enter max-h-[90vh] overflow-y-auto border-t-8 border-amber-600">
+            <button onclick="closeModal('modal-edit-profile')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl"><i class="fa-solid fa-times"></i></button>
+            <h3 class="font-bold text-xl mb-4 text-gray-900">Edit Profil & Data Desa</h3>
+            <form onsubmit="handleProfileSave(event)" class="space-y-4 text-sm">
+                <div><label class="block font-semibold mb-1">Sejarah Singkat</label><textarea rows="3" id="edit-sejarah" required class="w-full px-4 py-2 border rounded-xl"></textarea></div>
+                <div><label class="block font-semibold mb-1">Visi Utama</label><input type="text" id="edit-visi" required class="w-full px-4 py-2 border rounded-xl"></div>
+                <div><label class="block font-semibold mb-1">Misi Desa (Pisahkan dengan Enter)</label><textarea rows="3" id="edit-misi" required class="w-full px-4 py-2 border rounded-xl"></textarea></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block font-semibold mb-1">Kode Desa</label><input type="text" id="edit-kode" required class="w-full px-4 py-2 border rounded-xl"></div>
+                    <div><label class="block font-semibold mb-1">Tahun Pembentukan</label><input type="text" id="edit-tahun" required class="w-full px-4 py-2 border rounded-xl"></div>
+                    <div><label class="block font-semibold mb-1">Kecamatan</label><input type="text" id="edit-kec" required class="w-full px-4 py-2 border rounded-xl"></div>
+                    <div><label class="block font-semibold mb-1">Kabupaten</label><input type="text" id="edit-kab" required class="w-full px-4 py-2 border rounded-xl"></div>
+                    <div><label class="block font-semibold mb-1">Provinsi</label><input type="text" id="edit-prov" required class="w-full px-4 py-2 border rounded-xl"></div>
+                    <div><label class="block font-semibold mb-1">Luas Wilayah</label><input type="text" id="edit-luas" required class="w-full px-4 py-2 border rounded-xl"></div>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeModal('modal-edit-profile')" class="flex-1 bg-gray-200 font-bold py-3 rounded-xl">Batal</button>
+                    <button type="submit" class="flex-2 w-2/3 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-layanan" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative modal-enter">
+            <button onclick="closeModal('modal-layanan')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl"><i class="fa-solid fa-times"></i></button>
+            <div class="flex items-center space-x-3 text-primary mb-4"><i class="fa-solid fa-file-signature text-2xl"></i><h3 class="font-bold text-xl text-gray-900">Layanan Mandiri Desa</h3></div>
+            <form onsubmit="submitLayanan(event)" class="space-y-4 text-sm">
+                <div><label class="block font-semibold text-gray-700 mb-1">NIK</label><input type="number" required placeholder="16 digit NIK" class="w-full px-4 py-2 border rounded-xl"></div>
+                <div><label class="block font-semibold text-gray-700 mb-1">Nama Lengkap</label><input type="text" required placeholder="Sesuai KTP" class="w-full px-4 py-2 border rounded-xl"></div>
+                <div><label class="block font-semibold text-gray-700 mb-1">WhatsApp</label><input type="tel" required placeholder="081234..." class="w-full px-4 py-2 border rounded-xl"></div>
+                <div><label class="block font-semibold text-gray-700 mb-1">Jenis Surat</label><select required class="w-full px-4 py-2 border rounded-xl"><option value="">-- Pilih --</option><option value="Domisili">Domisili</option><option value="SKTM">SKTM</option><option value="SKU">SKU</option></select></div>
+                <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg mt-2">Kirim Pengajuan</button>
+            </form>
+        </div>
+    </div>
+    <div id="modal-role-select" class="fixed inset-0 bg-blue-950/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-8 shadow-2xl relative modal-enter text-center border-t-8 border-primary">
+            <button onclick="closeModal('modal-role-select')" class="absolute top-5 right-5 text-gray-400 text-xl"><i class="fa-solid fa-times"></i></button>
+            <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-primary text-3xl"><i class="fa-solid fa-users-gear"></i></div>
+            <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Pilih Hak Akses / Peran</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left mt-6">
+                <div onclick="selectRole('pembaca')" class="border-2 p-5 rounded-2xl cursor-pointer hover:border-primary hover:bg-blue-50 transition"><h4 class="font-bold text-gray-800">Pembaca</h4><p class="text-xs text-gray-500 mt-1">Akses biasa untuk warga</p></div>
+                <div onclick="selectRole('admin')" class="border-2 p-5 rounded-2xl cursor-pointer hover:border-primary hover:bg-blue-50 transition"><h4 class="font-bold text-gray-800">Administrator</h4><p class="text-xs text-gray-500 mt-1">Kelola data, tambah berita & media</p></div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-admin-login" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl relative modal-enter">
+            <button onclick="closeModal('modal-admin-login')" class="absolute top-5 right-5 text-gray-400 text-xl"><i class="fa-solid fa-times"></i></button>
+            <h3 class="font-extrabold text-2xl text-center mb-6">Login Admin</h3>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-sm">
+                <div><label class="block font-semibold mb-1">Username</label><input type="text" id="admin-user" required placeholder="admin" class="w-full px-4 py-2.5 border rounded-xl"></div>
+                <div><label class="block font-semibold mb-1">Password</label><input type="password" id="admin-pass" required placeholder="admin123" class="w-full px-4 py-2.5 border rounded-xl"></div>
+                <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg mt-2">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
