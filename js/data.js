@@ -1,7 +1,7 @@
 
 // BENAR:
-const SUPABASE_URL = 'https://xyzasdfghjklqwerty.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX... (kunci yang sangat panjang) ...';
+NEXT_PUBLIC_SUPABASE_URL=https://nxcgzpnismkivhdnzdcu.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xvYyjwiO49ORQ_wIOfyPwQ_5dspGW0k
 
 // Inisialisasi Supabase Client
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
