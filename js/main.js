@@ -92,14 +92,18 @@ async function renderGallery() {
     if (error) { container.innerHTML = '<div class="col-span-full text-center py-8 text-red-500">Gagal memuat galeri.</div>'; return; }
     container.innerHTML = '';
     
+    window.globalGalleryData = galleryData; // Simpan ke memori untuk fitur Edit
+
     if (galleryData.length === 0) {
         container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400">Belum ada foto galeri.</div>';
         return;
     }
 
     galleryData.forEach(item => {
+        // Tombol Edit dikembalikan ke sini
         const adminButtons = currentRole === 'admin' ? `
             <div class="flex space-x-2 mt-3 pt-2 border-t border-gray-100">
+                <button onclick="openEditModal('galeri', ${item.id})" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold py-1 rounded"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                 <button onclick="deleteItem('galeri', ${item.id})" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold py-1 rounded"><i class="fa-solid fa-trash"></i> Hapus</button>
             </div>` : '';
 
@@ -236,10 +240,11 @@ async function renderProfile() {
 }
 
 // ==========================================
-// 5. SIMPAN DATA CRUD (GALERI, BERITA, PERPUSTAKAAN)
+// 5. SIMPAN ATAU EDIT DATA CRUD 
 // ==========================================
 async function handleCRUDSave(event) {
     event.preventDefault();
+    const id = document.getElementById('crud-id').value; // Cek apakah ada ID (mode edit)
     const type = document.getElementById('crud-type').value;
     const title = document.getElementById('crud-title').value;
     const catOrDate = document.getElementById('crud-cat').value;
@@ -247,23 +252,30 @@ async function handleCRUDSave(event) {
     const desc = document.getElementById('crud-desc').value;
     const contentOrUrl = document.getElementById('crud-content').value;
 
-    showToast("Memproses...", "Menyimpan data ke Supabase...");
+    showToast("Memproses...", id ? "Memperbarui data..." : "Menyimpan data baru...");
 
+    let error;
     if (type === 'galeri') {
-        const { error } = await db.from('galeri').insert([{ title, cat: catOrDate, img }]);
+        const dataObj = { title, cat: catOrDate, img };
+        if (id) { ({ error } = await db.from('galeri').update(dataObj).eq('id', id)); } 
+        else { ({ error } = await db.from('galeri').insert([dataObj])); }
         if (error) { alert("Gagal: " + error.message); return; }
         renderGallery();
     } else if (type === 'berita') {
-        const { error } = await db.from('berita').insert([{ title, date: catOrDate, img, desc, content: contentOrUrl }]);
+        const dataObj = { title, date: catOrDate, img, desc, content: contentOrUrl };
+        if (id) { ({ error } = await db.from('berita').update(dataObj).eq('id', id)); } 
+        else { ({ error } = await db.from('berita').insert([dataObj])); }
         if (error) { alert("Gagal: " + error.message); return; }
         renderNews();
     } else { // buku, audio, video
-        const { error } = await db.from('perpustakaan').insert([{ type, title, cat: catOrDate, img, desc, extra_content: contentOrUrl }]);
+        const dataObj = { type, title, cat: catOrDate, img, desc, extra_content: contentOrUrl };
+        if (id) { ({ error } = await db.from('perpustakaan').update(dataObj).eq('id', id)); } 
+        else { ({ error } = await db.from('perpustakaan').insert([dataObj])); }
         if (error) { alert("Gagal: " + error.message); return; }
         renderLibrary(type);
     }
 
-    showToast("Berhasil!", "Data tersimpan ke cloud untuk semua pengunjung.");
+    showToast("Berhasil!", id ? "Data berhasil diperbarui." : "Data tersimpan ke cloud.");
     closeModal('modal-crud');
 }
 
@@ -410,6 +422,39 @@ function openCRUDModal(type) {
     preview.classList.add('border-dashed');
 
     openModal('modal-crud');
+}
+
+// --- FUNGSI BUKA MODAL EDIT ---
+function openEditModal(type, id) {
+    let item;
+    if (type === 'berita') item = (window.globalNewsData || []).find(i => i.id === id);
+    else if (type === 'galeri') item = (window.globalGalleryData || []).find(i => i.id === id);
+    else item = (window.globalLibraryData || []).find(i => i.id === id);
+    
+    if (!item) return;
+
+    openCRUDModal(type); // Buka form
+    document.getElementById('crud-id').value = item.id; // Set ID agar sistem tahu ini mode edit
+    document.getElementById('crud-modal-title').innerText = `Edit: ${item.title}`;
+
+    document.getElementById('crud-title').value = item.title;
+    document.getElementById('crud-cat').value = type === 'berita' ? item.date : item.cat;
+    
+    // Tampilkan foto lama
+    const preview = document.getElementById('crud-img-preview');
+    const imgElement = preview.querySelector('img');
+    const iconElement = preview.querySelector('i');
+    
+    if(item.img) {
+        imgElement.src = item.img;
+        imgElement.classList.remove('hidden');
+        iconElement.classList.add('hidden');
+        preview.classList.remove('border-dashed');
+        document.getElementById('crud-img-data').value = item.img;
+    }
+
+    document.getElementById('crud-desc').value = item.desc || '';
+    document.getElementById('crud-content').value = item.content || item.extra_content || '';
 }
 
 function openEditProfileModal() {
