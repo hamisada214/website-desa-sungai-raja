@@ -39,7 +39,6 @@
                     <a href="berita.html" class="nav-link hover:text-primary transition py-2">Informasi Publik</a>
                     <a href="perpustakaan.html" class="nav-link hover:text-primary transition py-2">Perpustakaan</a>
                     <a href="galeri.html" class="nav-link hover:text-primary transition py-2">Galeri</a>
-                    <button onclick="openModal('modal-layanan')" class="bg-primary hover:bg-blue-800 text-white px-5 py-2.5 rounded-full shadow transition flex items-center space-x-2 font-semibold"><i class="fa-solid fa-file-signature"></i><span>Buat Surat Online</span></button>
                 </div>
                 <div class="lg:hidden flex items-center"><button id="mobile-menu-btn" class="text-gray-600 hover:text-primary focus:outline-none text-2xl"><i class="fa-solid fa-bars"></i></button></div>
             </div>
@@ -50,7 +49,6 @@
             <a href="berita.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Informasi Publik</a>
             <a href="perpustakaan.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Perpustakaan Digital</a>
             <a href="galeri.html" class="block w-full text-left py-2 text-gray-700 font-medium border-b">Galeri Desa</a>
-            <div class="pt-2"><button onclick="openModal('modal-layanan'); closeMobileMenu();" class="w-full bg-primary text-white py-2.5 rounded-xl font-semibold text-xs">Buat Surat Online</button></div>
         </div>
     </nav>
 
@@ -79,20 +77,6 @@
             <div class="pt-8 border-t border-gray-800 text-center text-xs text-gray-500"><p>© 2026 Pemerintah Desa Sungai Raja - Labuhanbatu Utara. Powered by Smart Village Portal.</p></div>
         </div>
     </footer>
-
-    <div id="modal-layanan" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative modal-enter">
-            <button onclick="closeModal('modal-layanan')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl"><i class="fa-solid fa-times"></i></button>
-            <div class="flex items-center space-x-3 text-primary mb-4"><i class="fa-solid fa-file-signature text-2xl"></i><h3 class="font-bold text-xl text-gray-900">Layanan Mandiri Desa</h3></div>
-            <form onsubmit="submitLayanan(event)" class="space-y-4 text-sm">
-                <div><label class="block font-semibold text-gray-700 mb-1">NIK</label><input type="number" required placeholder="16 digit NIK" class="w-full px-4 py-2 border rounded-xl"></div>
-                <div><label class="block font-semibold text-gray-700 mb-1">Nama Lengkap</label><input type="text" required placeholder="Sesuai KTP" class="w-full px-4 py-2 border rounded-xl"></div>
-                <div><label class="block font-semibold text-gray-700 mb-1">WhatsApp</label><input type="tel" required placeholder="081234..." class="w-full px-4 py-2 border rounded-xl"></div>
-                <div><label class="block font-semibold text-gray-700 mb-1">Jenis Surat</label><select required class="w-full px-4 py-2 border rounded-xl"><option value="">-- Pilih --</option><option value="Domisili">Domisili</option><option value="SKTM">SKTM</option><option value="SKU">SKU</option></select></div>
-                <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg mt-2">Kirim Pengajuan</button>
-            </form>
-        </div>
-    </div>
 
     <div id="modal-role-select" class="fixed inset-0 bg-blue-950/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white rounded-3xl max-w-xl w-full p-8 shadow-2xl relative modal-enter text-center border-t-8 border-primary">

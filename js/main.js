@@ -390,9 +390,3 @@ function showToast(title, message) {
         setTimeout(() => { toast.classList.add('hidden'); }, 4000);
     }
 }
-function submitLayanan(event) {
-    event.preventDefault();
-    closeModal('modal-layanan');
-    showToast("Pengajuan Berhasil", "Nomor Tiket: SR-" + Math.floor(1000 + Math.random() * 9000));
-    event.target.reset();
-}
