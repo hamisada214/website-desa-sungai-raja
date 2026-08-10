@@ -15,34 +15,70 @@ document.addEventListener('DOMContentLoaded', () => {
     
     applyRoleUI(currentRole);
 
-    // Event listener upload gambar
-    const imgFileInput = document.getElementById('crud-img-file');
-    if (imgFileInput) {
-        imgFileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('crud-img-preview');
-            const imgDataInput = document.getElementById('crud-img-data');
+    // Gantilah event listener upload gambar di js/main.js dengan kode ini:
+const imgFileInput = document.getElementById('crud-img-file');
+if (imgFileInput) {
+    imgFileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('crud-img-preview');
+        const imgDataInput = document.getElementById('crud-img-data');
 
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    alert('File bukan gambar!');
-                    event.target.value = '';
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                alert('File yang dipilih bukan gambar!');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    // Kompresi otomatis menggunakan HTML Canvas
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Batasi resolusi maksimum ke 800px agar ukuran file sangat ringan (< 200KB)
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert ke JPEG dengan kualitas 0.7 (ringan dan hemat memori)
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+                    // Tampilkan pratinjau & masukkan ke input hidden
                     const imgElement = preview.querySelector('img');
                     const iconElement = preview.querySelector('i');
-                    imgElement.src = e.target.result;
+                    imgElement.src = compressedBase64;
                     imgElement.classList.remove('hidden');
-                    iconElement.classList.add('hidden');
+                    if (iconElement) iconElement.classList.add('hidden');
                     preview.classList.remove('border-dashed');
-                    imgDataInput.value = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-    }
+
+                    imgDataInput.value = compressedBase64;
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
 
     const mobileBtn = document.getElementById('mobile-menu-btn');
     if (mobileBtn) {
