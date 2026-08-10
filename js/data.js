@@ -1,3 +1,10 @@
+// Konfigurasi Supabase (Ganti URL dan KEY dengan milik Anda)
+const SUPABASE_URL = 'PASTE_PROJECT_URL_ANDA_DI_SINI';
+const SUPABASE_ANON_KEY = 'PASTE_ANON_KEY_ANDA_DI_SINI';
+
+// Inisialisasi Supabase Client
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // Data Default Perpustakaan
 const defaultLibraryData = {
     buku: [

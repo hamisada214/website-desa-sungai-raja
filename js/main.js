@@ -88,16 +88,35 @@ if (imgFileInput) {
     }
 });
 
-// --- RENDER GALERI ---
-function renderGallery() {
+// --- RENDER GALERI (Dari Cloud Supabase) ---
+async function renderGallery() {
     const container = document.getElementById('gallery-container');
     if (!container) return;
+    
+    container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400">Memuat data galeri...</div>';
+
+    // Ambil data langsung dari tabel 'galeri' di Supabase
+    const { data: galleryData, error } = await db
+        .from('galeri')
+        .select('*')
+        .order('id', { ascending: false });
+
+    if (error) {
+        console.error('Gagal mengambil galeri:', error);
+        container.innerHTML = '<div class="col-span-full text-center py-8 text-red-500">Gagal memuat galeri dari cloud.</div>';
+        return;
+    }
+
     container.innerHTML = '';
+    
+    if (galleryData.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400">Belum ada foto galeri.</div>';
+        return;
+    }
 
     galleryData.forEach(item => {
         const adminButtons = currentRole === 'admin' ? `
             <div class="flex space-x-2 mt-3 pt-2 border-t border-gray-100">
-                <button onclick="openEditModal('galeri', '${item.id}')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold py-1 rounded"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                 <button onclick="deleteItem('galeri', '${item.id}')" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold py-1 rounded"><i class="fa-solid fa-trash"></i> Hapus</button>
             </div>` : '';
 
@@ -106,7 +125,6 @@ function renderGallery() {
                 <div>
                     <div class="relative overflow-hidden aspect-video rounded-xl cursor-pointer" onclick="openGalleryModal('${item.title}', '${item.img}')">
                         <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-2xl"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
                     </div>
                     <div class="p-2">
                         <span class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold uppercase">${item.cat}</span>
@@ -203,6 +221,36 @@ function renderNews() {
 function openModal(modalId) { const el = document.getElementById(modalId); if (el) el.classList.remove('hidden'); }
 function closeModal(modalId) { const el = document.getElementById(modalId); if (el) el.classList.add('hidden'); }
 function closeMobileMenu() { const el = document.getElementById('mobile-menu'); if(el) el.classList.add('hidden'); }
+// --- FUNGSI POPUP BERITA (SELENGKAPNYA) ---
+function openNews(id) {
+    // Cari data berita berdasarkan ID yang diklik
+    const item = newsData.find(i => i.id === id);
+    if (!item) return; // Jika tidak ada, berhenti
+
+    const contentDiv = document.getElementById('news-modal-content');
+    if (contentDiv) {
+        // Masukkan struktur HTML berita ke dalam kotak pop-up
+        contentDiv.innerHTML = `
+            <img src="${item.img}" class="w-full h-64 object-cover rounded-2xl shadow mb-6">
+            <span class="text-xs text-gray-400 font-semibold">
+                <i class="fa-regular fa-calendar mr-1"></i> ${item.date}
+            </span>
+            <h2 class="font-extrabold text-2xl text-gray-900 mt-1 mb-4">${item.title}</h2>
+            
+            <div class="text-sm text-gray-700 leading-relaxed space-y-4 border-t border-gray-100 pt-4">
+                <p class="whitespace-pre-wrap">${item.content}</p>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+                <button onclick="closeModal('modal-news')" class="bg-primary text-white text-xs font-bold px-6 py-2.5 rounded-xl hover:bg-blue-800 transition shadow">
+                    Tutup Berita
+                </button>
+            </div>`;
+        
+        // Tampilkan modal pop-up berita
+        openModal('modal-news');
+    }
+}
 function openGalleryModal(title, imgSrc) {
     document.getElementById('gallery-zoom-title').innerText = title;
     document.getElementById('gallery-zoom-img').src = imgSrc;
@@ -306,66 +354,57 @@ function openEditModal(type, id) {
     if (type === 'video') document.getElementById('crud-content').value = item.video || '';
 }
 
-function handleCRUDSave(event) {
+async function handleCRUDSave(event) {
     event.preventDefault();
-    const id = document.getElementById('crud-id').value;
     const type = document.getElementById('crud-type').value;
-    
     const title = document.getElementById('crud-title').value;
     const catOrDate = document.getElementById('crud-cat').value;
-    const img = document.getElementById('crud-img-data').value || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+    const img = document.getElementById('crud-img-data').value;
     const desc = document.getElementById('crud-desc').value;
     const contentOrUrl = document.getElementById('crud-content').value;
 
-    if (id) {
-        if (type === 'berita') {
-            const idx = newsData.findIndex(i => i.id === id);
-            if (idx !== -1) newsData[idx] = { id, title, date: catOrDate, img, desc, content: contentOrUrl };
-        } else if (type === 'galeri') {
-            const idx = galleryData.findIndex(i => i.id === id);
-            if (idx !== -1) galleryData[idx] = { id, title, cat: catOrDate, img };
-        } else {
-            const idx = libraryData[type].findIndex(i => i.id === id);
-            if (idx !== -1) {
-                let updated = { id, title, cat: catOrDate, img, desc };
-                if (type === 'buku') updated.content = contentOrUrl;
-                if (type === 'audio') updated.audio = contentOrUrl;
-                if (type === 'video') updated.video = contentOrUrl;
-                libraryData[type][idx] = updated;
-            }
+    showToast("Memproses...", "Sedang menyimpan data ke database cloud...");
+
+    if (type === 'galeri') {
+        // Simpan ke tabel 'galeri' Supabase
+        const { error } = await db.from('galeri').insert([
+            { title: title, cat: catOrDate, img: img }
+        ]);
+
+        if (error) {
+            alert("Gagal menyimpan galeri: " + error.message);
+            return;
         }
-        showToast("Berhasil", "Data diperbarui.");
-    } else {
-        const newId = type[0] + Date.now().toString().slice(-4);
-        if (type === 'berita') {
-            newsData.unshift({ id: newId, title, date: catOrDate, img, desc, content: contentOrUrl });
-        } else if (type === 'galeri') {
-            galleryData.unshift({ id: newId, title, cat: catOrDate, img });
-        } else {
-            let newItem = { id: newId, title, cat: catOrDate, img, desc };
-            if (type === 'buku') newItem.content = contentOrUrl;
-            if (type === 'audio') newItem.audio = contentOrUrl;
-            if (type === 'video') newItem.video = contentOrUrl;
-            libraryData[type].unshift(newItem);
+        renderGallery();
+    } else if (type === 'berita') {
+        // Simpan ke tabel 'berita' Supabase
+        const { error } = await db.from('berita').insert([
+            { title: title, date: catOrDate, img: img, desc: desc, content: contentOrUrl }
+        ]);
+
+        if (error) {
+            alert("Gagal menyimpan berita: " + error.message);
+            return;
         }
-        showToast("Berhasil", "Data ditambahkan.");
+        renderNews();
     }
 
-    saveStorage();
+    showToast("Berhasil!", "Data tersimpan ke cloud dan bisa dilihat semua orang.");
     closeModal('modal-crud');
-    
-    if (type === 'berita') renderNews();
-    else if (type === 'galeri') renderGallery();
-    else renderLibrary(type);
 }
 
-function deleteItem(type, id) {
-    if (confirm("Hapus data ini?")) {
-        if (type === 'berita') { newsData = newsData.filter(i => i.id !== id); renderNews(); }
-        else if (type === 'galeri') { galleryData = galleryData.filter(i => i.id !== id); renderGallery(); }
-        else { libraryData[type] = libraryData[type].filter(i => i.id !== id); renderLibrary(type); }
-        saveStorage();
-        showToast("Dihapus", "Data berhasil dihapus.");
+async function deleteItem(type, id) {
+    if (confirm("Apakah Anda yakin ingin menghapus data ini dari database cloud secara permanen?")) {
+        if (type === 'galeri') {
+            const { error } = await db.from('galeri').delete().eq('id', id);
+            if (error) { alert("Gagal menghapus: " + error.message); return; }
+            renderGallery();
+        } else if (type === 'berita') {
+            const { error } = await db.from('berita').delete().eq('id', id);
+            if (error) { alert("Gagal menghapus: " + error.message); return; }
+            renderNews();
+        }
+        showToast("Terhapus", "Data berhasil dihapus dari cloud.");
     }
 }
 
