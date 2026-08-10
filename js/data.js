@@ -1,6 +1,7 @@
-// Konfigurasi Supabase (Ganti URL dan KEY dengan milik Anda)
-const SUPABASE_URL = 'PASTE_PROJECT_URL_ANDA_DI_SINI';
-const SUPABASE_ANON_KEY = 'PASTE_ANON_KEY_ANDA_DI_SINI';
+
+// BENAR:
+const SUPABASE_URL = 'https://xyzasdfghjklqwerty.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX... (kunci yang sangat panjang) ...';
 
 // Inisialisasi Supabase Client
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
