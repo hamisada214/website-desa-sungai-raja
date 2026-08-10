@@ -1,7 +1,7 @@
 
 // BENAR:
 NEXT_PUBLIC_SUPABASE_URL=https://nxcgzpnismkivhdnzdcu.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xvYyjwiO49ORQ_wIOfyPwQ_5dspGW0k
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54Y2d6cG5pc21raXZoZG56ZGN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzNTU2ODIsImV4cCI6MjEwMTkzMTY4Mn0.km_4i1E-nA3Qk8cDXDhK0rDTtQZa-o-iuf9_4xDvLFY
 
 // Inisialisasi Supabase Client
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
