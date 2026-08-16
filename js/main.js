@@ -248,12 +248,22 @@ async function renderProfile() {
         });
     };
 
-    renderList('val-batas-wilayah', pData.batas_wilayah, (k, v) => `<li class="flex items-start"><span class="font-bold w-24 shrink-0 text-gray-500">${k}</span> <span>: ${v}</span></li>`);
-    renderList('val-list-dusun', pData.list_dusun, (k, v) => `<div class="flex justify-between border-b border-gray-50 pb-2"><span class="font-bold text-gray-800">${k}</span><span class="text-gray-500 font-semibold">${v}</span></div>`);
-    renderList('val-perangkat', pData.list_perangkat, (k, v) => `<li class="flex"><span class="font-semibold w-36 shrink-0 text-gray-500">${k}</span> <span class="font-extrabold text-gray-900">: ${v}</span></li>`);
+    // Render List Khusus (TAMPILAN DIRAPIKAN)
+    renderList('val-batas-wilayah', pData.batas_wilayah, (k, v) => 
+        `<li class="flex items-start"><span class="font-bold w-32 shrink-0 text-gray-500">${k}</span> <span class="mr-2 text-gray-500">:</span> <span class="flex-1">${v}</span></li>`
+    );
+    
+    renderList('val-list-dusun', pData.list_dusun, (k, v) => 
+        `<div class="flex items-start justify-between border-b border-gray-50 pb-2"><span class="font-bold text-gray-800 w-24 shrink-0">${k}</span><span class="text-gray-500 font-semibold text-right flex-1 ml-2 leading-snug">${v}</span></div>`
+    );
+    
+    renderList('val-perangkat', pData.list_perangkat, (k, v) => 
+        `<li class="flex items-start"><span class="font-semibold w-36 shrink-0 text-gray-500">${k}</span> <span class="mr-2 font-extrabold text-gray-900">:</span> <span class="font-extrabold text-gray-900 flex-1">${v}</span></li>`
+    );
+    
     renderList('val-bpd', pData.list_bpd, (k, v) => {
-        if(k.toLowerCase().includes('ketua')) return `<li class="flex items-center mt-2"><span class="font-semibold w-32 shrink-0 text-gray-500">${k}</span> <span class="bg-teal-100 text-teal-900 px-3 py-1 rounded-md font-bold">: ${v}</span></li>`;
-        return `<li class="flex"><span class="font-semibold w-32 shrink-0 text-gray-500">${k}</span> <span class="font-semibold text-gray-800">: ${v}</span></li>`;
+        if(k.toLowerCase().includes('ketua')) return `<li class="flex items-start mt-2"><span class="font-semibold w-32 shrink-0 text-gray-500">${k}</span> <span class="mr-2 font-bold text-teal-900">:</span> <div class="flex-1"><span class="bg-teal-100 text-teal-900 px-3 py-1 rounded-md font-bold inline-block">${v}</span></div></li>`;
+        return `<li class="flex items-start"><span class="font-semibold w-32 shrink-0 text-gray-500">${k}</span> <span class="mr-2 font-semibold text-gray-800">:</span> <span class="font-semibold text-gray-800 flex-1">${v}</span></li>`;
     });
 }
 
