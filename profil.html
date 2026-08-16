@@ -94,6 +94,51 @@
                             <div class="flex border-b border-gray-100 pb-3"><span class="w-44 font-semibold text-gray-500">Provinsi</span><span id="val-prov" class="font-bold text-gray-800"></span></div>
                             <div class="flex pb-3"><span class="w-44 font-semibold text-gray-500">Luas Wilayah</span><span id="val-luas" class="font-bold text-gray-800"></span></div>
                         </div>
+<!-- DATA LENGKAP: WILAYAH, DUSUN, & PEMERINTAHAN (DINAMIS) -->
+    <div class="mt-12 space-y-8">
+        <!-- GRID 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-map-location-dot text-primary mr-2"></i> Batas Wilayah</h3>
+                    <ul id="val-batas-wilayah" class="space-y-2 text-sm text-gray-700"></ul>
+                </div>
+                <div class="pt-6 border-t border-gray-100">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-users-line text-secondary mr-2"></i> Kependudukan</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+                        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                            <span class="block text-xs text-gray-500 font-bold mb-1">Total Penduduk</span>
+                            <span class="text-lg font-extrabold text-primary"><span id="val-jml-penduduk">0</span> <span class="text-xs font-normal text-gray-600">Jiwa</span></span>
+                        </div>
+                        <div class="bg-teal-50 p-3 rounded-xl border border-teal-100">
+                            <span class="block text-xs text-gray-500 font-bold mb-1">Laki-laki & Perempuan</span>
+                            <span class="font-semibold text-gray-800">L: <span id="val-jml-l">0</span> / P: <span id="val-jml-p">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Daftar Dusun -->
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-4"><i class="fa-solid fa-signs-post text-amber-500 mr-2"></i> Wilayah Dusun</h3>
+                <div id="val-list-dusun" class="space-y-3 text-sm text-gray-700"></div>
+            </div>
+        </div>
+
+        <!-- GRID 2 -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12">
+            <h3 class="text-2xl font-bold text-gray-900 mb-8 text-center"><i class="fa-solid fa-sitemap text-primary mr-2"></i> Struktur Aparatur & Kelembagaan Desa</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <h4 class="font-bold text-lg text-primary mb-4 border-b-2 border-blue-100 pb-2">Pemerintahan Desa Aktif</h4>
+                    <ul id="val-perangkat" class="space-y-2 text-sm text-gray-700"></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg text-secondary mb-4 border-b-2 border-teal-100 pb-2">Badan Permusyawaratan Desa (BPD)</h4>
+                    <ul id="val-bpd" class="space-y-3 text-sm text-gray-700"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
                         <a href="https://maps.google.com" target="_blank" class="mt-8 inline-flex items-center bg-secondary hover:bg-teal-700 text-white font-bold px-6 py-3 rounded-xl shadow transition">
                             <i class="fa-solid fa-map-location-dot mr-2"></i> Buka Peta Google Maps
                         </a>
@@ -105,8 +150,8 @@
                                 <span class="text-xs font-bold text-gray-500 uppercase tracking-wider"><i class="fa-solid fa-image mr-1 text-primary"></i> Foto Peta Wilayah</span>
                                 <span class="text-[11px] bg-blue-100 text-primary px-2 py-0.5 rounded font-bold animate-pulse">Klik foto untuk perbesar 🔍</span>
                             </div>
-                            <div onclick="openGalleryModal('Peta Wilayah Desa Sungai Raja', 'img/peta_sungairaja.jpg')" class="w-full h-72 rounded-2xl overflow-hidden shadow-md border border-gray-200 bg-gray-100 relative group cursor-pointer">
-                                <img src="img/peta_sungairaja.jpg" alt="Peta Wilayah Desa Sungai Raja" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div onclick="openGalleryModal('Peta Wilayah Desa Sungai Raja', 'img/sungai_raja.png')" class="w-full h-72 rounded-2xl overflow-hidden shadow-md border border-gray-200 bg-gray-100 relative group cursor-pointer">
+                                <img src="img/sungai_raja.png" alt="Peta Wilayah Desa Sungai Raja" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
                                     <span class="bg-primary/90 text-white px-5 py-2.5 rounded-full flex items-center space-x-2 text-sm font-bold shadow-2xl transform scale-95 group-hover:scale-100 transition">
                                         <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
@@ -152,6 +197,29 @@
 
     <div id="modal-edit-profile" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative modal-enter max-h-[90vh] overflow-y-auto border-t-8 border-amber-600">
+            <!-- FORM TAMBAHAN UNTUK WILAYAH & PEMERINTAHAN -->
+                <h4 class="font-bold text-primary mt-6 mb-2 border-b pb-1">Kependudukan</h4>
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1">Total</label><input type="text" id="edit-jml-penduduk" class="w-full border rounded-lg p-2 text-sm" placeholder="6.945"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1">Laki-laki</label><input type="text" id="edit-jml-l" class="w-full border rounded-lg p-2 text-sm" placeholder="3.403"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1">Perempuan</label><input type="text" id="edit-jml-p" class="w-full border rounded-lg p-2 text-sm" placeholder="3.542"></div>
+                </div>
+
+                <h4 class="font-bold text-primary mt-4 mb-2 border-b pb-1">Batas Wilayah</h4>
+                <p class="text-[10px] text-gray-500 mb-1">Format (Gunakan Enter): Arah : Nama Desa</p>
+                <textarea id="edit-batas-wilayah" rows="4" class="w-full border rounded-lg p-2 text-sm mb-4"></textarea>
+
+                <h4 class="font-bold text-primary mt-4 mb-2 border-b pb-1">Daftar Dusun</h4>
+                <p class="text-[10px] text-gray-500 mb-1">Format (Gunakan Enter): Nama Dusun : Luas</p>
+                <textarea id="edit-list-dusun" rows="5" class="w-full border rounded-lg p-2 text-sm mb-4"></textarea>
+
+                <h4 class="font-bold text-primary mt-4 mb-2 border-b pb-1">Perangkat Desa</h4>
+                <p class="text-[10px] text-gray-500 mb-1">Format (Gunakan Enter): Jabatan : Nama Lengkap</p>
+                <textarea id="edit-list-perangkat" rows="6" class="w-full border rounded-lg p-2 text-sm mb-4"></textarea>
+
+                <h4 class="font-bold text-primary mt-4 mb-2 border-b pb-1">Anggota BPD</h4>
+                <p class="text-[10px] text-gray-500 mb-1">Format (Gunakan Enter): Jabatan : Nama Lengkap</p>
+                <textarea id="edit-list-bpd" rows="5" class="w-full border rounded-lg p-2 text-sm mb-6"></textarea>
             <button onclick="closeModal('modal-edit-profile')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl"><i class="fa-solid fa-times"></i></button>
             <h3 class="font-bold text-xl mb-4 text-gray-900">Edit Profil & Data Desa</h3>
             <form onsubmit="handleProfileSave(event)" class="space-y-4 text-sm">
@@ -171,6 +239,24 @@
                     <button type="submit" class="flex-2 w-2/3 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl">Simpan Perubahan</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="mt-12 bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12">
+        <h3 class="text-2xl font-bold text-gray-900 mb-6"><i class="fa-solid fa-users text-primary mr-2"></i> Pemerintahan & Kependudukan Desa</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+            <div class="space-y-3 bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+                <h4 class="font-bold text-primary text-base mb-2">Pimpinan Desa</h4>
+                <p><span class="font-semibold text-gray-500 w-36 inline-block">Kepala Desa</span>: <span class="font-bold text-gray-800">Heri Sahrizal Siregar</span></p>
+                <p><span class="font-semibold text-gray-500 w-36 inline-block">Sekretaris Desa</span>: <span class="font-bold text-gray-800">Selamat Abidin</span></p>
+                <p><span class="font-semibold text-gray-500 w-36 inline-block">Ketua BPD</span>: <span class="font-bold text-gray-800">Hindun Neni Sari</span></p>
+            </div>
+            <div class="space-y-3 bg-teal-50/50 p-6 rounded-2xl border border-teal-100">
+                <h4 class="font-bold text-secondary text-base mb-2">Statistik Penduduk</h4>
+                <p><span class="font-semibold text-gray-500 w-36 inline-block">Jumlah Penduduk</span>: <span class="font-bold text-gray-800">6.594 Jiwa</span></p>
+                <p><span class="font-semibold text-gray-500 w-36 inline-block">Laki-Laki</span>: <span class="font-bold text-gray-800">3.292 Jiwa</span></p>
+                <p><span class="font-semibold text-gray-500 w-36 inline-block">Perempuan</span>: <span class="font-bold text-gray-800">3.302 Jiwa</span></p>
+                <p><span class="font-semibold text-gray-500 w-36 inline-block">Jumlah Dusun</span>: <span class="font-bold text-gray-800">9 Dusun</span></p>
+            </div>
         </div>
     </div>
 

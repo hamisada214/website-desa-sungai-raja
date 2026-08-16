@@ -221,62 +221,102 @@ async function renderProfile() {
     if (error || profileList.length === 0) return;
 
     const pData = profileList[0];
+    window.globalProfileData = pData; // Simpan ke memori untuk form edit
 
-    document.getElementById('profile-sejarah-text').innerText = pData.sejarah;
-    document.getElementById('profile-visi-text').innerText = pData.visi;
+    // Render Data Dasar
+    document.getElementById('profile-sejarah-text').innerText = pData.sejarah || '';
+    document.getElementById('profile-visi-text').innerText = pData.visi || '';
     
     const misiList = document.getElementById('profile-misi-list');
     misiList.innerHTML = '';
-    (pData.misi || '').split('\n').forEach(misi => {
-        if(misi.trim()) misiList.innerHTML += `<li>${misi}</li>`;
+    (pData.misi || '').split('\n').forEach(misi => { if(misi.trim()) misiList.innerHTML += `<li>${misi}</li>`; });
+
+    ['kode', 'tahun', 'kec', 'kab', 'prov', 'luas'].forEach(id => {
+        const el = document.getElementById('val-' + id);
+        if(el) el.innerText = ': ' + (pData[id === 'kode' ? 'kode_desa' : id === 'kec' ? 'kecamatan' : id === 'kab' ? 'kabupaten' : id === 'prov' ? 'provinsi' : id] || '');
     });
 
-    document.getElementById('val-kode').innerText = ': ' + pData.kode_desa;
-    document.getElementById('val-tahun').innerText = ': ' + pData.tahun;
-    document.getElementById('val-kec').innerText = ': ' + pData.kecamatan;
-    document.getElementById('val-kab').innerText = ': ' + pData.kabupaten;
-    document.getElementById('val-prov').innerText = ': ' + pData.provinsi;
-    document.getElementById('val-luas').innerText = ': ' + pData.luas;
+    // Render Kependudukan
+    if(document.getElementById('val-jml-penduduk')) {
+        document.getElementById('val-jml-penduduk').innerText = pData.jml_penduduk || '-';
+        document.getElementById('val-jml-l').innerText = pData.jml_laki || '-';
+        document.getElementById('val-jml-p').innerText = pData.jml_perempuan || '-';
+    }
+
+    // Fungsi Pembantu Parser Teks (Mengubah "Kunci : Nilai" jadi HTML Grid)
+    const renderList = (elId, dataString, templateFn) => {
+        const el = document.getElementById(elId);
+        if(!el) return;
+        el.innerHTML = '';
+        (dataString || '').split('\n').forEach(line => {
+            let parts = line.split(':');
+            if(parts.length >= 2) el.innerHTML += templateFn(parts[0].trim(), parts.slice(1).join(':').trim());
+        });
+    };
+
+    // Render List Khusus
+    renderList('val-batas-wilayah', pData.batas_wilayah, (k, v) => `<li class="flex items-start"><span class="font-bold w-24 shrink-0 text-gray-500">${k}</span> <span>: ${v}</span></li>`);
+    renderList('val-list-dusun', pData.list_dusun, (k, v) => `<div class="flex justify-between border-b border-gray-50 pb-2"><span class="font-bold text-gray-800">${k}</span><span class="text-gray-500 font-semibold">${v}</span></div>`);
+    renderList('val-perangkat', pData.list_perangkat, (k, v) => `<li class="flex"><span class="font-semibold w-36 shrink-0 text-gray-500">${k}</span> <span class="font-extrabold text-gray-900">: ${v}</span></li>`);
+    renderList('val-bpd', pData.list_bpd, (k, v) => {
+        if(k.toLowerCase().includes('ketua')) return `<li class="flex items-center mt-2"><span class="font-semibold w-32 shrink-0 text-gray-500">${k}</span> <span class="bg-teal-100 text-teal-900 px-3 py-1 rounded-md font-bold">: ${v}</span></li>`;
+        return `<li class="flex"><span class="font-semibold w-32 shrink-0 text-gray-500">${k}</span> <span class="font-semibold text-gray-800">: ${v}</span></li>`;
+    });
 }
 
 // ==========================================
-// 5. SIMPAN ATAU EDIT DATA CRUD 
+// 6. SIMPAN EDIT PROFIL DESA (CLOUD)
 // ==========================================
-async function handleCRUDSave(event) {
+async function handleProfileSave(event) {
     event.preventDefault();
-    const id = document.getElementById('crud-id').value; // Cek apakah ada ID (mode edit)
-    const type = document.getElementById('crud-type').value;
-    const title = document.getElementById('crud-title').value;
-    const catOrDate = document.getElementById('crud-cat').value;
-    const img = document.getElementById('crud-img-data').value;
-    const desc = document.getElementById('crud-desc').value;
-    const contentOrUrl = document.getElementById('crud-content').value;
+    showToast("Memproses...", "Perbarui Profil Desa di cloud...");
 
-    showToast("Memproses...", id ? "Memperbarui data..." : "Menyimpan data baru...");
+    const updatedData = {
+        id: 1, 
+        sejarah: document.getElementById('edit-sejarah').value,
+        visi: document.getElementById('edit-visi').value,
+        misi: document.getElementById('edit-misi').value,
+        kode_desa: document.getElementById('edit-kode').value,
+        tahun: document.getElementById('edit-tahun').value,
+        kecamatan: document.getElementById('edit-kec').value,
+        kabupaten: document.getElementById('edit-kab').value,
+        provinsi: document.getElementById('edit-prov').value,
+        luas: document.getElementById('edit-luas').value,
+        jml_penduduk: document.getElementById('edit-jml-penduduk').value,
+        jml_laki: document.getElementById('edit-jml-l').value,
+        jml_perempuan: document.getElementById('edit-jml-p').value,
+        batas_wilayah: document.getElementById('edit-batas-wilayah').value,
+        list_dusun: document.getElementById('edit-list-dusun').value,
+        list_perangkat: document.getElementById('edit-list-perangkat').value,
+        list_bpd: document.getElementById('edit-list-bpd').value
+    };
 
-    let error;
-    if (type === 'galeri') {
-        const dataObj = { title, cat: catOrDate, img };
-        if (id) { ({ error } = await db.from('galeri').update(dataObj).eq('id', id)); } 
-        else { ({ error } = await db.from('galeri').insert([dataObj])); }
-        if (error) { alert("Gagal: " + error.message); return; }
-        renderGallery();
-    } else if (type === 'berita') {
-        const dataObj = { title, date: catOrDate, img, desc, content: contentOrUrl };
-        if (id) { ({ error } = await db.from('berita').update(dataObj).eq('id', id)); } 
-        else { ({ error } = await db.from('berita').insert([dataObj])); }
-        if (error) { alert("Gagal: " + error.message); return; }
-        renderNews();
-    } else { // buku, audio, video
-        const dataObj = { type, title, cat: catOrDate, img, desc, extra_content: contentOrUrl };
-        if (id) { ({ error } = await db.from('perpustakaan').update(dataObj).eq('id', id)); } 
-        else { ({ error } = await db.from('perpustakaan').insert([dataObj])); }
-        if (error) { alert("Gagal: " + error.message); return; }
-        renderLibrary(type);
-    }
+    const { error } = await db.from('profil').upsert(updatedData);
+    if (error) { alert("Gagal memperbarui profil: " + error.message); return; }
 
-    showToast("Berhasil!", id ? "Data berhasil diperbarui." : "Data tersimpan ke cloud.");
-    closeModal('modal-crud');
+    closeModal('modal-edit-profile');
+    renderProfile();
+    showToast("Berhasil!", "Profil Desa berhasil diperbarui.");
+}
+
+// (Cari fungsi openEditProfileModal yang lama, lalu ganti dengan ini)
+function openEditProfileModal() {
+    const pData = window.globalProfileData || {};
+
+    ['sejarah', 'visi', 'misi'].forEach(id => { document.getElementById('edit-' + id).value = pData[id] || ''; });
+    ['kode', 'tahun', 'kec', 'kab', 'prov', 'luas'].forEach(id => {
+        document.getElementById('edit-' + id).value = pData[id === 'kode' ? 'kode_desa' : id === 'kec' ? 'kecamatan' : id === 'kab' ? 'kabupaten' : id === 'prov' ? 'provinsi' : id] || '';
+    });
+
+    document.getElementById('edit-jml-penduduk').value = pData.jml_penduduk || '';
+    document.getElementById('edit-jml-l').value = pData.jml_laki || '';
+    document.getElementById('edit-jml-p').value = pData.jml_perempuan || '';
+    document.getElementById('edit-batas-wilayah').value = pData.batas_wilayah || '';
+    document.getElementById('edit-list-dusun').value = pData.list_dusun || '';
+    document.getElementById('edit-list-perangkat').value = pData.list_perangkat || '';
+    document.getElementById('edit-list-bpd').value = pData.list_bpd || '';
+
+    openModal('modal-edit-profile');
 }
 
 // ==========================================
