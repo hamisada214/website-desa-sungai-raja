@@ -399,8 +399,34 @@ function openMedia(type, id) {
     const item = (window.globalLibraryData || []).find(i => i.id == id);
     if (!item) return;
     const container = document.getElementById('media-content');
+    
     if (type === 'buku') {
-        container.innerHTML = `<div class="flex flex-col md:flex-row gap-6 items-center md:items-start"><img src="${item.img}" class="w-40 h-56 object-cover rounded-xl shadow-lg shrink-0"><div><span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded font-bold">${item.cat}</span><h3 class="font-extrabold text-xl text-gray-900 mt-2">${item.title}</h3><p class="text-xs text-gray-500 mt-1">${item.desc}</p><div class="mt-4 text-sm text-gray-700 bg-gray-50 p-4 rounded-xl border max-h-48 overflow-y-auto"><p class="font-bold mb-1">Sinopsis / Ringkasan Buku:</p>${item.extra_content}</div><div class="mt-6 flex space-x-3"><button onclick="closeModal('modal-media')" class="bg-gray-200 text-gray-700 text-xs font-bold px-4 py-2.5 rounded-lg">Tutup</button></div></div></div>`;
+        container.innerHTML = `
+        <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+            <!-- SISI KIRI: Gambar & Tombol PDF -->
+            <div class="flex flex-col w-40 shrink-0 space-y-3">
+                <img src="${item.img}" class="w-full h-56 object-cover rounded-xl shadow-lg">
+                <!-- Tombol Buka PDF -->
+                <a href="${item.pdf_link || '#'}" target="_blank" class="w-full bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold py-2.5 px-3 rounded-lg text-center shadow flex items-center justify-center space-x-1.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-file-pdf text-sm"></i>
+                    <span>Baca PDF</span>
+                </a>
+            </div>
+            
+            <!-- SISI KANAN: Teks & Sinopsis -->
+            <div class="flex-1 w-full text-left md:text-left text-center">
+                <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded font-bold">${item.cat}</span>
+                <h3 class="font-extrabold text-xl text-gray-900 mt-2">${item.title}</h3>
+                <p class="text-xs text-gray-500 mt-1">${item.desc}</p>
+                <div class="mt-4 text-sm text-gray-700 bg-gray-50 p-4 rounded-xl border max-h-48 overflow-y-auto text-left">
+                    <p class="font-bold mb-1">Sinopsis / Ringkasan Buku:</p>
+                    <p class="whitespace-pre-wrap">${item.extra_content || '-'}</p>
+                </div>
+                <div class="mt-6 flex justify-center md:justify-end">
+                    <button onclick="closeModal('modal-media')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold px-6 py-2.5 rounded-lg transition-all">Tutup</button>
+                </div>
+            </div>
+        </div>`;
     } else if (type === 'audio') {
         container.innerHTML = `<div class="text-center py-4"><div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fa-solid fa-headphones-simple"></i></div><span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded font-bold">${item.cat}</span><h3 class="font-extrabold text-xl text-gray-900 mt-2">${item.title}</h3><p class="text-xs text-gray-500 mt-1 max-w-md mx-auto">${item.desc}</p><div class="mt-6 bg-gray-50 p-4 rounded-xl border max-w-md mx-auto"><audio controls class="w-full"><source src="${item.extra_content}" type="audio/mpeg"></audio></div><button onclick="closeModal('modal-media')" class="mt-6 bg-gray-800 text-white text-xs font-bold px-6 py-2.5 rounded-lg">Selesai</button></div>`;
     } else if (type === 'video') {
