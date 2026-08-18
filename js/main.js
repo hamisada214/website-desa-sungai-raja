@@ -442,7 +442,7 @@ function selectRole(role) {
 
 function handleAdminLogin(event) {
     event.preventDefault();
-    if (document.getElementById('admin-user').value === 'admin' && document.getElementById('admin-pass').value === 'admin123') {
+    if (document.getElementById('admin-user').value === 'sungairaja' && document.getElementById('admin-pass').value === 'sungairaja2026') {
         closeModal('modal-admin-login');
         applyRoleUI('admin');
         showToast("Login Berhasil!", "Mode Administrator Aktif.");
